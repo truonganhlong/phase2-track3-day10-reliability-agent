@@ -12,9 +12,9 @@ def main() -> None:
     args = parser.parse_args()
     metrics = json.loads(Path(args.metrics).read_text())
     lines = [
-        "# Day 10 Reliability Final Report",
+        "# Báo cáo Reliability Agent - Day 10",
         "",
-        "## Metrics Summary",
+        "## Tóm tắt metrics",
         "",
         "| Metric | Value |",
         "|---|---:|",
@@ -23,14 +23,16 @@ def main() -> None:
         if key == "scenarios":
             continue
         lines.append(f"| {key} | {value} |")
-    lines += ["", "## Chaos Scenarios", "", "| Scenario | Status |", "|---|---|"]
+    lines += ["", "## Chaos scenarios", "", "| Scenario | Status |", "|---|---|"]
     for key, value in metrics.get("scenarios", {}).items():
         lines.append(f"| {key} | {value} |")
     lines += [
         "",
-        "## Analysis TODO(student)",
+        "## Phân tích",
         "",
-        "Explain what failed, why the fallback path worked or did not work, and what you would change before production.",
+        "Gateway dùng cache trước, sau đó route qua primary/backup provider được bảo vệ bởi circuit breaker.",
+        "Fallback path hoạt động khi primary lỗi hoặc circuit mở; static fallback chỉ dùng khi toàn bộ provider không khả dụng.",
+        "Điểm cần cải thiện trước production là chia sẻ circuit breaker state giữa nhiều instance và thêm load test song song.",
     ]
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text("\n".join(lines))
